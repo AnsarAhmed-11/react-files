@@ -9,8 +9,6 @@ const Form = () => {
     sessionStorage.setItem('name',title)
     setTitle('')
   }
-
-
   return (
     <div>
       <form className="" onSubmit={(e) => {
