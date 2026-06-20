@@ -1,13 +1,13 @@
-import React from 'react'
-import Buttons from './Buttons'
 
+import Buttons from './Buttons'
+import PageTransition from "./PageTransition"
 const Feedback = () => {
     
     return (
-    <div>
+    <PageTransition>
       <h1>Feedback</h1>
       <Buttons/>
-    </div>
+   </PageTransition>
   )
 }
 

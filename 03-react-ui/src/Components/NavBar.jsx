@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { GraduationCap } from 'lucide-react'
 
 const NavaBar = () => {
-    return (
+    return (   
         <div className="navbar">
             <GraduationCap />
             <Link to={'/'}>Home</Link>

@@ -1,10 +1,10 @@
-import React from 'react'
 
+import PageTransition from "./PageTransition"
 const courses = () => {
   return (
-    <div>
+    <PageTransition>
       <h1>Courses</h1>
-    </div>
+    </PageTransition>
   )
 }
 

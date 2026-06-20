@@ -46,7 +46,7 @@ const Api = () => {
 
         {load ? (
           <div className={Styles.loader}>
-            <Commet color={["#3c497c", "#7c3c69", "#7c6f3c", "#3c7c4f"]} />
+            <h1>Loading...</h1>
           </div>
         ) : (
           img.map((el) => (

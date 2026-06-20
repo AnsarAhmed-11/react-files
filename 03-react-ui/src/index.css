@@ -26,6 +26,7 @@ h1{
   height: 100px;
   width: 100%;
   background: #547289;
+  transition: all ease .4s;
 }
 .navbar *{
   color: white;

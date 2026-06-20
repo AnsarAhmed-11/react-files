@@ -1,0 +1,29 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  display: flex;
+  justify-content: center;
+  background: #111;
+  color: white;
+}
+nav{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: darkslategray;
+  width: 100vw;
+  height: 70px;
+}
+.dark{
+  background: darkslategray;
+}
+.light{
+  background: rgb(167, 240, 240);
+}
+button{
+  padding: 10px ;
+  border-radius: ;
+}

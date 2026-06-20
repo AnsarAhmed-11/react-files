@@ -1,10 +1,13 @@
-import React from 'react'
+import { motion } from "framer-motion"
+import PageTransition from "./PageTransition"
 
 const about = () => {
+
+
   return (
-    <div>
+    <PageTransition>
       <h1>About</h1>
-    </div>
+    </PageTransition>
   )
 }
 

@@ -1,9 +1,9 @@
-
+import PageTransition from "./PageTransition"
 const HomeNew = () => {
   return (
-    <div>
+    <PageTransition>
       <h1>Home</h1>
-    </div>
+    </PageTransition>
   )
 }
 
