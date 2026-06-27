@@ -23,19 +23,19 @@ const Form = () => {
                 <h2>Form</h2>
                 <div className="form-fields">
                     <label htmlFor='name'>Name</label>
-                    <input type="text" placeholder="Enter Name" name='name' />
+                    <input id="name" type="text" placeholder="Enter Name" name='name' autoComplete="name" required />
                 </div>
                 <div className="form-fields">
                     <label htmlFor='email'>Email</label>
-                    <input type="text" placeholder="Enter Name" name='email' />
+                    <input id="email" type="email" placeholder="Enter Email" name='email' autoComplete="email" required />
                 </div>
                 <div className="form-fields">
                     <label htmlFor='password'>Password</label>
-                    <input type="text" placeholder="Enter Name" name='password' />
+                    <input id="password" type="password" placeholder="Enter Password" name='password' autoComplete="current-password" required />
                 </div>
                 <div className="form-fields">
                     <button disabled={pending}>
-                        {pending ? 'Wait Until Submitting' : 'Regsiter'}
+                        {pending ? 'Wait Until Submitting' : 'Register'}
                     </button>
                 </div>
             {

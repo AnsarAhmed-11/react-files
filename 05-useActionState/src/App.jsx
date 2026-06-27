@@ -1,9 +1,10 @@
 import Form from "./Components/Form"
-
+import Server from './Components/Server'
 const App = () => {
   return (
     <div>
-      <Form/>
+      {/* <Form/> */}
+      <Server/>
     </div>
   )
 }
