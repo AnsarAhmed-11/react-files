@@ -11,7 +11,9 @@ const Server = () => {
     }, []);
     return (
         <div>
-            <h1>{message ? message : "not work ing"}</h1>
+            <h1 style={{
+                webkitTextStroke:'.9px #6cd5f9',color:'transparent',scale:'1.4'
+            }}>{message ? message : "not work ing"}</h1>
             <h1>Now nxt with mysql</h1>
         </div>
     );
