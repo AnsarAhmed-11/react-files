@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 
 const Server = () => {
     const [message, setMessage] = useState("");
-
     useEffect(() => {
-        axios.get("http://localhost:5000/api/message")
+        axios.get("http://localhost:3000")
             .then((res) => setMessage(res.data.message))
             .catch((err) => console.log(err));
     }, []);
