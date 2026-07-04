@@ -1,5 +1,5 @@
 import { useActionState } from "react"
-
+import axios from "axios"
 const Form = () => {
     const formHandler = async (prevData, formData) => {
 
@@ -8,14 +8,19 @@ const Form = () => {
         const password = formData.get('password')
         await new Promise(res => setTimeout(res, 1000))
         console.log(name);
-        if (name && email && password) {
-            return { message: 'data Submitted' }
-        }
-        else {
-            return { error: 'Something went wrong..' }
+        console.log(email);
+
+        try {
+            const res = await axios.post("http://localhost:5000/data", {
+                name, email, password
+            })
+            return {
+                message: res.data.message || "data submit properly"
+            }
+        } catch (error) {
+            return { error: error.res?.data?.message || "server error", }
         }
     }
-
     const [data, action, pending] = useActionState(formHandler, undefined)
     return (
         <div>
@@ -38,12 +43,12 @@ const Form = () => {
                         {pending ? 'Wait Until Submitting' : 'Register'}
                     </button>
                 </div>
-            {
-                data?.error && <span>{data?.error}</span>
-            }
-            {
-                data?.message && <span>{data?.message}</span>
-            }
+                {
+                    data?.error && <span>{data?.error}</span>
+                }
+                {
+                    data?.message && <span>{data?.message}</span>
+                }
             </form>
         </div>
     )
