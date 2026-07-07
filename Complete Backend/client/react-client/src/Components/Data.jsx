@@ -14,20 +14,32 @@ const Data = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [users]);
 
   return (
-    <div>
-      <h1>Data</h1>
-      {users.map((el) => {
-        return <div>
-          {el.name}
-          {el.email}
-          {el.password}
-        </div>
+<div className="user-data">
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+      </tr>
+    </thead>
 
-      })}
-    </div>
+    <tbody>
+      {users.map((user) => (
+        <tr key={user.id}>
+          <td>{user.id}</td>
+          <td>{user.name}</td>
+          <td>{user.email}</td>
+          <td>{user.password}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
   )
 }
 

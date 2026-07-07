@@ -9,8 +9,7 @@ app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("hello from server");
-  console.log("ehello");
-
+  console.log("hello");
 });
 app.post("/data", (req, res) => {
   const { name, email, password } = req.body;
@@ -34,15 +33,21 @@ app.post("/data", (req, res) => {
     });
   });
 });
-  app.get("/users", (req, res) => {
-    db.query("SELECT * FROM reactData", (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json(results);
-    });
+app.get("/users", (req, res) => {
+  db.query("SELECT * FROM reactData", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
   });
+});
 
-  app.listen(5000, () => {
-    console.log("Server running on port 5000");
-  });
+app.post("/delete",(req, res) => {
+  res.json({
+    message: "wokring",
+    
+  })
+})
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});

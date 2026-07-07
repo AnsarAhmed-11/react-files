@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Asset&family=Bebas+Neue&family=Blaka+Ink&family=Boldonse&family=Limelight&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Notable&family=Poller+One&family=Rubik:ital,wght@0,300..900;1,300..900&family=Saira+Stencil:ital,wght@0,100..900;1,100..900&family=Syne:wght@400..800&family=UnifrakturMaguntia&display=swap');
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   display: flex;
   justify-content: center;
@@ -72,8 +73,10 @@ body::before {
 }
 
 .form h2 {
+  color: transparent;
   text-align: center;
   font-weight: 900;
+  -webkit-text-stroke: 1px red;
 }
 
 input {
@@ -94,4 +97,61 @@ span:nth-of-type(1) {
 
 span:nth-of-type(2) {
   color: rgb(49, 139, 248);
+}
+
+.user-data {
+  width: 90vw;
+  max-height: 80vh;
+  /* overflow-y: auto; */
+  overflow-x: hidden;
+  border-radius: 20px;
+  box-shadow: 1px 1px 5px lightseagreen, -1px -1px 10px lightseagreen;
+  background: #3535351c;
+  backdrop-filter: blur(3px);
+  padding: 10px;
+}
+
+.user-data table {
+  user-select: none;
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  color: white;
+  text-align: center;
+  scale: .97;
+}
+
+.user-data thead {
+  position: sticky;
+  top: 0;
+}
+
+.user-data th {
+  background: darkslategrey;
+  padding: 15px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.user-data td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.user-data tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.user-data tbody tr:hover {
+  background: rgba(32, 178, 171, 0.2);
+  transition: 0.3s;
+}
+
+.user-data::-webkit-scrollbar {
+  width: 8px;
+}
+
+.user-data::-webkit-scrollbar-thumb {
+  background: lightseagreen;
+  border-radius: 10px;
 }
