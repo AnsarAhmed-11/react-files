@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 
 const Data = () => {
   const [users, setUsers] = useState([]);
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get("http://localhost:5000/users");
@@ -13,8 +11,14 @@ const Data = () => {
         console.log(err);
       }
     };
+  useEffect(() => {
     fetchData();
-  }, [users]);
+  const interval = setInterval(() => {
+    fetchData();
+  }, 5000); // Every 5 seconds
+
+  return () => clearInterval(interval);
+  }, []);
 
   return (
 <div className="user-data">

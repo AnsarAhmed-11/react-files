@@ -2,7 +2,7 @@
 import Form from "./Components/Form";
 import { Route, Routes } from "react-router-dom";
 import Data from "./Components/Data";
-import Update from "./Components/update";
+import Delete from "./Components/Delete";
 const App = () => {
 
   return (
@@ -10,7 +10,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Form/>}/>
       <Route path="/data" element={<Data/>}/>
-      <Route path="/update" element={<Update/>}/>
+      <Route path="/Delete" element={<Delete/>}/>
     </Routes>
     </div>
   );

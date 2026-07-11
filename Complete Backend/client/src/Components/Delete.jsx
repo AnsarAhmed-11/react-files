@@ -1,31 +1,33 @@
 import { useActionState } from "react"
 import axios from "axios"
-const Update = () => {
+const Delete = () => {
     const formHandler = async (prevData, formData) => {
-
-        const email = formData.get('email')
-        const password = formData.get('password')
+        const name = formData.get('name')
+        // const email = formData.get('email')
+        // const password = formData.get('password')
         await new Promise(res => setTimeout(res, 1000))
-        console.log(email);
-        console.log(password);
 
         try {
             const res = await axios.post("http://localhost:5000/delete", {
-                email, password
+                name,
             })
-            return {
-                message: res.data.message || "data deleted successfully"
-            }
+            return { message: res.data.message }//making object whose key name is message
         } catch (error) {
-            return { error: error.res?.data?.message || "Error", }
+            return { error: error.response?.data?.message }
         }
     }
+
     const [data, action, pending] = useActionState(formHandler, undefined)
     return (
         <div>
             <form className="form" action={action}>
                 <h2>Delete Form</h2>
                 <div className="form-fields">
+                    <label htmlFor='name'>name</label>
+                    <input id="name" type="text" placeholder="Enter name" name='name' autoComplete="name" required />
+                </div>
+
+                {/*<div className="form-fields">
                     <label htmlFor='email'>Email</label>
                     <input id="email" type="email" placeholder="Enter Email" name='email' autoComplete="email" required />
                 </div>
@@ -33,6 +35,7 @@ const Update = () => {
                     <label htmlFor='password'>Password</label>
                     <input id="password" type="password" placeholder="Enter Password" name='password' autoComplete="current-password" required />
                 </div>
+                */}
                 <div className="form-fields">
                     <button disabled={pending}>
                         {pending ? 'Wait Until Submitting' : 'Delete'}
@@ -49,4 +52,4 @@ const Update = () => {
     )
 }
 
-export default Update
+export default Delete
