@@ -42,16 +42,15 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/delete", (req, res) => {
-  // const { email, password } = req.body
-  const { name } = req.body
+  const { email, password } = req.body
   //query Fetch and Delete
-  const findData = "SELECT * FROM reactData WHERE name = ?"
-  const sql = "DELETE FROM reactData WHERE name = ?"
+  const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
+  const sqlD = "DELETE FROM reactData WHERE email = ? AND password=?"
 
-  db.query(findData, [name], (err, result) => {
+  db.query(findData, [email, password], (err, result) => {
     if (err) {
       res.status(500).json({
-        message: "Data not Found"
+        message: "something went wrong..."
       })
     }
     if (result.length === 0) {
@@ -59,7 +58,7 @@ app.post("/delete", (req, res) => {
         message: "User not found"
       });
     }
-    db.query(sql, [name], (err, deleteResult) => {
+    db.query(sqlD, [email, password], (err, deleteResult) => {
       if (err) {
         return res.status(500).send(err);
       }
@@ -67,6 +66,24 @@ app.post("/delete", (req, res) => {
         message: "data deleted ✅"
       })
     });
+
+  })
+})
+      // Pending here
+app.post("/update", (req, res) => {
+  const { email, password } = req.body
+  const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
+  db.query(findData, [email, password], (err, result) => {
+    if (err) {
+      res.status(500).json({
+        message: "data not found"
+      })
+    }
+    if (result.length === 0) {
+      return res.status(500).json({
+        message: "User not found"
+      });
+    }
 
   })
 })
