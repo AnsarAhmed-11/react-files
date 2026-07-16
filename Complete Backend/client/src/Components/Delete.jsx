@@ -22,7 +22,7 @@ const Delete = () => {
             <form className="form" action={action}>
                 <h2>Delete Form</h2>
                 <div className="form-fields">
-                    <label htmlFor='email'>Email</label>
+                    <label html For='email'>Email</label>
                     <input id="email" type="email" placeholder="Enter Email" name='email' autoComplete="email" required />
                 </div>
                 <div className="form-fields">

@@ -1,7 +1,6 @@
 const express = require("express");
 const db = require("./database");
 const cors = require("cors");
-
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -69,22 +68,26 @@ app.post("/delete", (req, res) => {
 
   })
 })
-      // Pending here
+// Pending here
 app.post("/update", (req, res) => {
   const { email, password } = req.body
   const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
   db.query(findData, [email, password], (err, result) => {
     if (err) {
       res.status(500).json({
-        message: "data not found"
+        message: "backend error"
       })
     }
+
     if (result.length === 0) {
       return res.status(500).json({
         message: "User not found"
       });
     }
-
+    // res.cookie("isLoggedIn", "true", {
+    //   httpOnly: true,
+    //   maxAge: 24 * 60 * 60 * 1000
+    // });
   })
 })
 

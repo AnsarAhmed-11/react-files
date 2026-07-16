@@ -1,26 +1,20 @@
 import { useActionState } from "react"
 import axios from "axios"
-
-
 const Update = () => {
     const formHandler = async (prevData, formData) => {
         const email = formData.get("email")
         const password = formData.get("password")
-        await new Promise(res => setTimeout(res, 1000))
+        // await new Promise(res => setTimeout(res, 1000))//it delay the request for 1s
         try {
-            const res = await axios.post("http://localhost:5000/update", {
-                email, password
-            })
+            const res = await axios.post("http://localhost:5000/update", { email, password })
             return { message: res.data.message }
-            console.log(data);
-            
         } catch (err) {
-            return { error: response.data.message }
+            return { error: err.response?.data?.message }
         }
     }
-                /**
-                 * Form going on blank page
-                 */
+    /*
+     * Form going on blank page coz catch has problem Now Fixed
+     */
     const [data, action, pending] = useActionState(formHandler, undefined)
     return (
         <div>
