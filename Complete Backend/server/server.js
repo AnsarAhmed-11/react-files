@@ -1,20 +1,33 @@
+require("dotenv").config()
+
 const express = require("express");
 const db = require("./database");
 const cors = require("cors");
-const app = express();
-app.use(express.json());
-app.use(cors());
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.use(cors({
+  origin: "http://localhost:5173", // React app URL
+  credentials: true,
+}));
 
 app.get("/", (req, res) => {
   res.send("hello from server");
   console.log("hello");
 });
 
-app.post("/data", (req, res) => {
+app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
+
   const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
+
   db.query(sql, [name, email, password], (err, result) => {
+
     if (err) {
       console.log(err);
       return res.status(500).json({
@@ -23,15 +36,29 @@ app.post("/data", (req, res) => {
       });
     }
 
+    const token = jwt.sign(
+      {
+        id: result.insertId,
+        email
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     res.json({
       message: "data has been received",
-      data: { name, email },
-      insertId: result.insertId
     });
   });
 });
 
-app.get("/users", (req, res) => {
+app.get("/users-data", (req, res) => {
   db.query("SELECT * FROM reactData", (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -68,26 +95,23 @@ app.post("/delete", (req, res) => {
 
   })
 })
-// Pending here
+
 app.post("/update", (req, res) => {
   const { email, password } = req.body
   const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
   db.query(findData, [email, password], (err, result) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "backend error"
       })
     }
-
     if (result.length === 0) {
-      return res.status(500).json({
+       return res.status(500).json({
         message: "User not found"
       });
+      console.log("this is run");
+      
     }
-    // res.cookie("isLoggedIn", "true", {
-    //   httpOnly: true,
-    //   maxAge: 24 * 60 * 60 * 1000
-    // });
   })
 })
 

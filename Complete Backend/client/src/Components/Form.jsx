@@ -11,14 +11,17 @@ const Form = () => {
         console.log(email);
 
         try {
-            const res = await axios.post("http://localhost:5000/data", {
+            const res = await axios.post("http://localhost:5000/register", {
                 name, email, password
+            }, {
+                // withCredentials: true zaroori hai taaki browser cookie receive kare aur future requests me automatically bheje.
+                withCredentials: true,
             })
             return {
                 message: res.data.message || "data submit properly"
             }
         } catch (error) {
-            return { error: error.res?.data?.message || "server error", }
+            return { error: error.response?.data?.message || "server error", }
         }
     }
     const [data, action, pending] = useActionState(formHandler, undefined)

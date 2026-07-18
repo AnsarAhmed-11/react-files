@@ -9,7 +9,7 @@ const Data = () => {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/users");
+        const res = await axios.get("http://localhost:5000/users-data");
         setUsers(res.data);
       } catch (err) {
         console.log(err);
