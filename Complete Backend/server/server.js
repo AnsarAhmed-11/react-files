@@ -24,38 +24,51 @@ app.get("/", (req, res) => {
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
 
+  const findData = "SELECT * FROM reactData WHERE email = ?"
   const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
 
-  db.query(sql, [name, email, password], (err, result) => {
-
+  db.query(findData, [email], (err, result) => {
     if (err) {
-      console.log(err);
       return res.status(500).json({
-        message: "Database error",
-        error: err,
-      });
+        message: "database error",
+      })
     }
-
-    const token = jwt.sign(
-      {
-        id: result.insertId,
-        email
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
+    if (result.length > 0) {
+      return res.status(409).json({
+        message: "email already exists",
+      })
+    }
+    db.query(sql, [name, email, password], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          message: "Database error in registering..",
+          error: err,
+        });
       }
-    );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+      const token = jwt.sign(
+        {
+          id: result.insertId,
+          email
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
 
-    res.json({
-      message: "data has been received",
+      res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      res.json({
+        message: "Registered",
+      });
+
     });
-  });
+  })
+
 });
 
 app.get("/users-data", (req, res) => {
@@ -99,19 +112,26 @@ app.post("/delete", (req, res) => {
 app.post("/update", (req, res) => {
   const { email, password } = req.body
   const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
+
   db.query(findData, [email, password], (err, result) => {
     if (err) {
       return res.status(500).json({
+        success:false,
         message: "backend error"
       })
     }
     if (result.length === 0) {
-       return res.status(500).json({
+      return res.status(404).json({
+        success:false,
         message: "User not found"
       });
-      console.log("this is run");
-      
     }
+
+    res.json({
+      success:true,
+      message:"user found",
+
+    })
   })
 })
 

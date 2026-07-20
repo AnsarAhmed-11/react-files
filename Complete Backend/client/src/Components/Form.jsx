@@ -1,5 +1,7 @@
 import { useActionState } from "react"
 import axios from "axios"
+import { Link } from "react-router-dom"
+
 const Form = () => {
     const formHandler = async (prevData, formData) => {
 
@@ -7,8 +9,6 @@ const Form = () => {
         const email = formData.get('email')
         const password = formData.get('password')
         await new Promise(res => setTimeout(res, 1000))
-        console.log(name);
-        console.log(email);
 
         try {
             const res = await axios.post("http://localhost:5000/register", {
@@ -18,7 +18,7 @@ const Form = () => {
                 withCredentials: true,
             })
             return {
-                message: res.data.message || "data submit properly"
+                message: res.data.message || "data submit"
             }
         } catch (error) {
             return { error: error.response?.data?.message || "server error", }
@@ -47,11 +47,14 @@ const Form = () => {
                     </button>
                 </div>
                 {
-                    data?.error && <span>{data?.error}</span>
+                    data?.error && <span style={{ color: "#d90429" }}>{data?.error}</span>
                 }
                 {
-                    data?.message && <span>{data?.message}</span>
+                    data?.message && <span styles={{ color: "#1f7a8c" }}>{data?.message}</span>
                 }
+                <div className="footer">
+                <Link to="/update">Update</Link>
+                </div>
             </form>
         </div>
     )

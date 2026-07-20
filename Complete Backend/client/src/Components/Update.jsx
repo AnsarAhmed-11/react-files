@@ -1,13 +1,21 @@
 import { useActionState } from "react"
+import { useNavigate } from "react-router-dom";
 import axios from "axios"
+import Profile from "./Profile";
+
+
 const Update = () => {
+    const send = useNavigate()
     const formHandler = async (prevData, formData) => {
         const email = formData.get("email")
         const password = formData.get("password")
         // await new Promise(res => setTimeout(res, 1000))//it delay the request for 1s
         try {
             const res = await axios.post("http://localhost:5000/update", { email, password })
-            return { message: res.data.message }
+            if (res.data.success === true) {
+                send("/Profile")
+            }
+            return { message: "done" }
         } catch (err) {
             return { error: err.response?.data?.message }
         }
