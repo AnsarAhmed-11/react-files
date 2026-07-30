@@ -116,25 +116,56 @@ app.post("/update", (req, res) => {
   db.query(findData, [email, password], (err, result) => {
     if (err) {
       return res.status(500).json({
-        success:false,
+        success: false,
         message: "backend error"
       })
     }
     if (result.length === 0) {
       return res.status(404).json({
-        success:false,
+        success: false,
         message: "User not found"
       });
     }
-
     res.json({
-      success:true,
-      message:"user found",
-
+      success: true,
+      message: "user found",
+      email
     })
   })
 })
+//authentication pending with token
+//leaved on email or password updation
+app.post("/updateData", (req, res) => {
+  const { name, password } = req.body
+  sqlN = "UPDATE reactData SET name = ? WHERE email = ?"
+  sqlP = "UPDATE reactData SET password = ? WHERE email = ?"
 
+  if (name == "") {
+    if (password == "") {
+      return res.status(500).json({
+        message: "somehting went wrong"
+      })
+    }
+    else {
+      db.query(slqP, (err, result) => {
+        if (err) {
+          return res.status(500).json({
+            message: "password realted issue"
+          })
+        }
+        return res.json({
+          message: "password updated"
+        })
+      })
+
+    }
+  }
+  else{
+    db.query(sqlN)
+  }
+
+
+})
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });

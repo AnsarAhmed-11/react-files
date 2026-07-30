@@ -13,6 +13,8 @@ const Update = () => {
         try {
             const res = await axios.post("http://localhost:5000/update", { email, password })
             if (res.data.success === true) {
+                localStorage.setItem("isLoggedIn",res.data.success)
+                alert("welcome to update profile page")
                 send("/Profile")
             }
             return { message: "done" }
