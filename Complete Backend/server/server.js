@@ -5,6 +5,7 @@ const db = require("./database");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -21,11 +22,12 @@ app.get("/", (req, res) => {
   console.log("hello");
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   const findData = "SELECT * FROM reactData WHERE email = ?"
   const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
+  const hashPassword = await bcrypt.hash(password, 10)
 
   db.query(findData, [email], (err, result) => {
     if (err) {
@@ -38,7 +40,7 @@ app.post("/register", (req, res) => {
         message: "email already exists",
       })
     }
-    db.query(sql, [name, email, password], (err, result) => {
+    db.query(sql, [name, email, hashPassword], (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -46,7 +48,6 @@ app.post("/register", (req, res) => {
           error: err,
         });
       }
-
       const token = jwt.sign(
         {
           id: result.insertId,
@@ -80,13 +81,12 @@ app.get("/users-data", (req, res) => {
   });
 });
 
-app.post("/delete", (req, res) => {
+app.post("/delete", async (req, res) => {
   const { email, password } = req.body
   //query Fetch and Delete
-  const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
-  const sqlD = "DELETE FROM reactData WHERE email = ? AND password=?"
-
-  db.query(findData, [email, password], (err, result) => {
+  const findData = "SELECT * FROM reactData WHERE email = ?"
+  const sqlD = "DELETE FROM reactData WHERE email = ?"
+  db.query(findData, [email], async (err, result) => {
     if (err) {
       res.status(500).json({
         message: "something went wrong..."
@@ -94,18 +94,30 @@ app.post("/delete", (req, res) => {
     }
     if (result.length === 0) {
       return res.status(404).json({
-        message: "User not found"
+        message: "Invalid user-email"
       });
     }
-    db.query(sqlD, [email, password], (err, deleteResult) => {
-      if (err) {
-        return res.status(500).send(err);
+    try {
+      const hashPassword = result[0].password
+      const matchPassword = await bcrypt.compare(password, hashPassword);
+      if (!matchPassword) {
+        return res.status(401).json({
+          message: "invalid password,"
+        })
       }
-      res.status(200).json({
-        message: "data deleted ✅"
+      db.query(sqlD, [email], (err, deleteResult) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        return res.status(200).json({
+          message: "data deleted ✅"
+        })
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: "server error from DB",
       })
-    });
-
+    }
   })
 })
 
@@ -147,7 +159,7 @@ app.post("/updateData", (req, res) => {
       })
     }
     else {
-      db.query(slqP, (err, result) => {
+      db.query(sqlP, (err, result) => {
         if (err) {
           return res.status(500).json({
             message: "password realted issue"
@@ -160,7 +172,7 @@ app.post("/updateData", (req, res) => {
 
     }
   }
-  else{
+  else {
     db.query(sqlN)
   }
 

@@ -3,6 +3,35 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 
 const Form = () => {
+    //testing fake data
+    const sendFakeUsers = async () => {
+        for (let i = 0; i < 100; i++) {
+
+            const fakeData = {
+                name: `Test User ${i}`,
+                email: `test${Date.now()}${i}@gmail.com`,
+                password: "123456"
+            };
+
+            try {
+                const res = await axios.post(
+                    "http://localhost:5000/register",
+                    fakeData,
+                    {
+                        withCredentials: true
+                    }
+                );
+
+                console.log(i, res.data.message);
+
+            } catch (error) {
+                console.log(
+                    i,
+                    error.response?.data?.message || "error"
+                );
+            }
+        }
+    };
     const formHandler = async (prevData, formData) => {
 
         const name = formData.get('name')
@@ -24,6 +53,7 @@ const Form = () => {
             return { error: error.response?.data?.message || "server error", }
         }
     }
+
     const [data, action, pending] = useActionState(formHandler, undefined)
     return (
         <div>
@@ -50,10 +80,10 @@ const Form = () => {
                     data?.error && <span style={{ color: "#d90429" }}>{data?.error}</span>
                 }
                 {
-                    data?.message && <span styles={{ color: "#1f7a8c" }}>{data?.message}</span>
+                    data?.message && <span style={{ color: "#1f7a8c" }}>{data?.message}</span>
                 }
                 <div className="footer">
-                <Link to="/update">Update</Link>
+                    <Link to="/update">Update</Link>
                 </div>
             </form>
         </div>
