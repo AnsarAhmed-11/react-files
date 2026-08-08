@@ -1,2 +1,8 @@
-server/.env
-server/node_modules/
+node_modules/
+.env
+.env.*
+!.env.example
+
+build/
+dist/
+*.loggit filter-branch --force --index-filter "git rm --cached --ignore-unmatch server/.env" --prune-empty --tag-name-filter cat -- --all

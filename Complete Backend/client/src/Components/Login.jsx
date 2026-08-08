@@ -11,7 +11,7 @@ const formHandler = async (prevData, formData) => {
         await new Promise(res => setTimeout(res, 1000))
 
         try {
-            const res = await axios.post("http://localhost:5000/register", {
+            const res = await axios.post("http://localhost:5000/dummy", {
                 name, email, password
             }, {
                 // withCredentials: true zaroori hai taaki browser cookie receive kare aur future requests me automatically bheje.
@@ -47,7 +47,7 @@ const formHandler = async (prevData, formData) => {
                     data?.error && <span style={{ color: "#d90429" }}>{data?.error}</span>
                 }
                 {
-                    data?.message && <span style={{ color: "#1f7a8c" }}>{data?.message}</span>
+                    data?.message && <span style={{ color: "#4df4a3" }}>{data?.message}</span>
                 }
                 <div className="footer">
                     <Link to="/update">Update</Link>
