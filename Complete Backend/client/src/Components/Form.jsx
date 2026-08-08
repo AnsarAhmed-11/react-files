@@ -3,35 +3,35 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 
 const Form = () => {
-    //testing fake data
-    const sendFakeUsers = async () => {
-        for (let i = 0; i < 100; i++) {
+    //testing fake data -- 
+    // const sendFakeUsers = async () => {
+    //     for (let i = 0; i < 100; i++) {
 
-            const fakeData = {
-                name: `Test User ${i}`,
-                email: `test${Date.now()}${i}@gmail.com`,
-                password: "123456"
-            };
+    //         const fakeData = {
+    //             name: `Test User ${i}`,
+    //             email: `test${Date.now()}${i}@gmail.com`,
+    //             password: "123456"
+    //         };
 
-            try {
-                const res = await axios.post(
-                    "http://localhost:5000/register",
-                    fakeData,
-                    {
-                        withCredentials: true
-                    }
-                );
+    //         try {
+    //             const res = await axios.post(
+    //                 "http://localhost:5000/register",
+    //                 fakeData,
+    //                 {
+    //                     withCredentials: true
+    //                 }
+    //             );
 
-                console.log(i, res.data.message);
+    //             console.log(i, res.data.message);
 
-            } catch (error) {
-                console.log(
-                    i,
-                    error.response?.data?.message || "error"
-                );
-            }
-        }
-    };
+    //         } catch (error) {
+    //             console.log(
+    //                 i,
+    //                 error.response?.data?.message || "error"
+    //             );
+    //         }
+    //     }
+    // };
     const formHandler = async (prevData, formData) => {
 
         const name = formData.get('name')

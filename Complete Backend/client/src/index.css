@@ -159,7 +159,7 @@ span {
 
 .user-data thead {
   position: sticky;
-  top: 0;
+  top: -20%;
 }
 
 .user-data th {
@@ -186,8 +186,3 @@ span {
 .user-data::-webkit-scrollbar {
   width: 8px;
 }
-/*
-.user-data::-webkit-scrollbar-thumb {
-  background: lightseagreen;
-  border-radius: 10px;
-} */
