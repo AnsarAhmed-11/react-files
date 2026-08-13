@@ -1,70 +1,114 @@
 const db = require("../Config/db")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const dummy = async (req, res) => {
-    res.json({
-        message: "request coming"
-    })
-}
+const { fetchAll, findByEmail, createUser } = require("../Models/user.model")
+
 const register = async (req, res) => {
     const { name, email, password } = req.body;
-
-    const findData = "SELECT * FROM reactData WHERE email = ?"
-    const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
-    const hashPassword = await bcrypt.hash(password, 10)
-
-    db.query(findData, [email], (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                message: "database error",
-            })
-        }
+    try {
+        const result = await findByEmail(email)
         if (result.length > 0) {
             return res.status(409).json({
                 message: "email already exists",
             })
         }
-        db.query(sql, [name, email, hashPassword], (err, result) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({
-                    message: "Database error in registering..",
-                    error: err,
-                });
+        const hashPassword = await bcrypt.hash(password, 10)
+        const newUser = await createUser(name, email, hashPassword)
+        const token = jwt.sign(
+            {
+                id: newUser.insertId,
+                email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d",
             }
-            const token = jwt.sign(
-                {
-                    id: result.insertId,
-                    email
-                },
-                process.env.JWT_SECRET,
-                {
-                    expiresIn: "1d",
-                }
-            );
+        );
 
-            res.cookie("token", token, {
-                httpOnly: true,
-                maxAge: 24 * 60 * 60 * 1000,
-            });
-            res.json({
-                message: "Registered",
-            });
-
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
         });
+        res.json({
+            message: "Registered",
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            message: "something went wrong"
+        })
+        console.log(err)
+    }
+
+    // const findData = "SELECT * FROM reactData WHERE email = ?"
+    // // const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
+    // // const hashPassword = await bcrypt.hash(password, 10)
+
+    // db.query(findData, [email], (err, result) => {
+    //     if (err) {
+    //         return res.status(500).json({
+    //             message: "database error",
+    //         })
+    //     }
+    //     if (result.length > 0) {
+    //         return res.status(409).json({
+    //             message: "email already exists",
+    //         })
+    //     }
+    //     db.query(sql, [name, email, hashPassword], (err, result) => {
+    //         if (err) {
+    //             console.log(err);
+    //             return res.status(500).json({
+    //                 message: "Database error in registering..",
+    //                 error: err,
+    //             });
+    //         }
+    //         const token = jwt.sign(
+    //             {
+    //                 id: result.insertId,
+    //                 email
+    //             },
+    //             process.env.JWT_SECRET,
+    //             {
+    //                 expiresIn: "1d",
+    //             }
+    //         );
+
+    //         res.cookie("token", token, {
+    //             httpOnly: true,
+    //             maxAge: 24 * 60 * 60 * 1000,
+    //         });
+    //         res.json({
+    //             message: "Registered",
+    //         });
+
+    //     });
+    // })
+
+}
+const Login = async (req, res) => {
+
+    res.json({
+        message: "request coming"
     })
-
 }
-
 const data = async (req, res) => {
-    db.query("SELECT * FROM reactData", (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(results);
-    });
+    try {
+        const results = await fetchAll()
+        res.status(200).json(results)
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            error: err.message
+        });
+    }
+    // db.query("SELECT * FROM reactData", (err, results) => {
+    //     if (err) {
+    //         return res.status(500).json({ error: err.message });
+    //     }
+    //     res.json(results);
+    // });
 }
-
 const remove = async (req, res) => {
     const { email, password } = req.body
     //query Fetch and Delete
@@ -105,7 +149,6 @@ const remove = async (req, res) => {
     })
 
 }
-
 const update = async (req, res) => {
     const { email, password } = req.body
     const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
@@ -131,7 +174,6 @@ const update = async (req, res) => {
     })
 
 }
-
 const updateData = async (req, res) => {
     const { name, password } = req.body
     sqlN = "UPDATE reactData SET name = ? WHERE email = ?"
@@ -162,4 +204,4 @@ const updateData = async (req, res) => {
     }
 
 }
-module.exports = { dummy, register, data, remove, update, updateData }
+module.exports = { Login, register, data, remove, update, updateData }

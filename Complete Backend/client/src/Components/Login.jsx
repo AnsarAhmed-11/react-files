@@ -3,16 +3,13 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 
 const Login = () => {
-const formHandler = async (prevData, formData) => {
+    const formHandler = async (prevData, formData) => {
 
-        const name = formData.get('name')
         const email = formData.get('email')
         const password = formData.get('password')
-        await new Promise(res => setTimeout(res, 1000))
-
         try {
-            const res = await axios.post("http://localhost:5000/dummy", {
-                name, email, password
+            const res = await axios.post("http://localhost:5000/Login", {
+                email, password
             }, {
                 // withCredentials: true zaroori hai taaki browser cookie receive kare aur future requests me automatically bheje.
                 withCredentials: true,
