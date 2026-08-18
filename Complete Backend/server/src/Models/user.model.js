@@ -14,7 +14,12 @@ const fetchAll = async () => {
 
 const createUser = async (name, email, password) => {
     const sql = `INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)`;
-    const [result] = await db.promise().query(sql,[name,email,password])
+    const [result] = await db.promise().query(sql, [name, email, password])
     return result;
 }
-module.exports = { findByEmail, fetchAll, createUser }
+const findByPassword = async (password) => {
+    const sql = 'select * from reactData where password=?'
+    const [result] = await db.promise().query(sql);
+    return result;
+}
+module.exports = { findByEmail, fetchAll, createUser, findByPassword }

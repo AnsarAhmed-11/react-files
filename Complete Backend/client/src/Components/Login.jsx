@@ -1,8 +1,8 @@
 import { useActionState } from "react"
 import axios from "axios"
-import { Link } from "react-router-dom"
-
+import { Link, useNavigate } from "react-router-dom"
 const Login = () => {
+    const send=useNavigate()
     const formHandler = async (prevData, formData) => {
 
         const email = formData.get('email')
@@ -14,6 +14,12 @@ const Login = () => {
                 // withCredentials: true zaroori hai taaki browser cookie receive kare aur future requests me automatically bheje.
                 withCredentials: true,
             })
+          if(res.data.success===true){
+            localStorage.setItem("isLoggedIn",res.data.success)
+                alert("welcome to update profile page")
+                send("/Profile")
+          }
+
             return {
                 message: res.data.message || "data submit"
             }

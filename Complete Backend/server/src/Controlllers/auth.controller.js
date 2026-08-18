@@ -1,7 +1,7 @@
 const db = require("../Config/db")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const { fetchAll, findByEmail, createUser } = require("../Models/user.model")
+const { fetchAll, findByEmail, createUser, findByPassword } = require("../Models/user.model")
 
 const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -39,59 +39,64 @@ const register = async (req, res) => {
         })
         console.log(err)
     }
-
-    // const findData = "SELECT * FROM reactData WHERE email = ?"
-    // // const sql = "INSERT INTO reactData (name, email, password) VALUES (?, ?, ?)";
-    // // const hashPassword = await bcrypt.hash(password, 10)
-
-    // db.query(findData, [email], (err, result) => {
-    //     if (err) {
-    //         return res.status(500).json({
-    //             message: "database error",
-    //         })
-    //     }
-    //     if (result.length > 0) {
-    //         return res.status(409).json({
-    //             message: "email already exists",
-    //         })
-    //     }
-    //     db.query(sql, [name, email, hashPassword], (err, result) => {
-    //         if (err) {
-    //             console.log(err);
-    //             return res.status(500).json({
-    //                 message: "Database error in registering..",
-    //                 error: err,
-    //             });
-    //         }
-    //         const token = jwt.sign(
-    //             {
-    //                 id: result.insertId,
-    //                 email
-    //             },
-    //             process.env.JWT_SECRET,
-    //             {
-    //                 expiresIn: "1d",
-    //             }
-    //         );
-
-    //         res.cookie("token", token, {
-    //             httpOnly: true,
-    //             maxAge: 24 * 60 * 60 * 1000,
-    //         });
-    //         res.json({
-    //             message: "Registered",
-    //         });
-
-    //     });
-    // })
-
 }
 const Login = async (req, res) => {
+    const { email, password } = req.body;
 
-    res.json({
-        message: "request coming"
-    })
-}
+    try {
+        const userEmail = await findByEmail(email);
+
+        if (userEmail.length <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Email doesn't exist"
+            });
+        }
+
+        const user = userEmail[0];
+
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!passwordMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Password not matched"
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Login successful"
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong.."
+        });
+    }
+};
 const data = async (req, res) => {
     try {
         const results = await fetchAll()
@@ -151,27 +156,57 @@ const remove = async (req, res) => {
 }
 const update = async (req, res) => {
     const { email, password } = req.body
-    const findData = "SELECT * FROM reactData WHERE email = ? AND password=?"
+    try {
 
-    db.query(findData, [email, password], (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: "backend error"
-            })
-        }
-        if (result.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
+        const user = await findByEmail(email);
+
+        if (user.length === 0) {
+            return res.status(409).json({
+                message: "Email doesn't exist",
+                success: false
             });
         }
-        res.json({
+
+        // Now check the password for this user
+        const passwordMatch = await bcrypt.compare(password, user[0].password);
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                message: "Incorrect password",
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Login successful",
             success: true,
-            message: "user found",
-            email
+            user: user[0]
+        });
+
+    } catch (err) {
+        return res.status(401).json({
+            message: "soemthing went wrong",
         })
-    })
+    }
+    // db.query(findData, [email, password], (err, result) => {
+    //     if (err) {
+    //         return res.status(500).json({
+    //             success: false,
+    //             message: "backend error"
+    //         })
+    //     }
+    //     if (result.length === 0) {
+    //         return res.status(404).json({
+    //             success: false,
+    //             message: "User not found"
+    //         });
+    //     }
+    //     res.json({
+    //         success: true,
+    //         message: "user found",
+    //         email
+    //     })
+    // })
 
 }
 const updateData = async (req, res) => {
