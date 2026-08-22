@@ -1,8 +1,6 @@
 import { useActionState } from "react"
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
-import Profile from "./Profile";
-
 
 const Update = () => {
     const send = useNavigate()
@@ -13,9 +11,9 @@ const Update = () => {
         try {
             const res = await axios.post("http://localhost:5000/update", { email, password })
             if (res.data.success === true) {
-                localStorage.setItem("isLoggedIn",res.data.success)
+                localStorage.setItem("isLoggedIn", res.data.success)
                 alert("welcome to update profile page")
-                send("/Profile")
+                send("/Profile", { state: { email } })
             }
             return { message: "done" }
         } catch (err) {

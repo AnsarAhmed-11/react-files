@@ -66,6 +66,7 @@ body::before {
   justify-content: center;
   height: max-content;
   transform: translate(3%, -50%);
+  position: relative;
 }
 
 .form-fields button {
@@ -106,6 +107,7 @@ span {
   padding: 10px;
   animation: shadowColor 5s infinite linear;
 }
+
 @keyframes shadowColor {
   0% {
     box-shadow: 0 0 5px #f72585, 0 0 15px #f72585;
@@ -147,6 +149,7 @@ span {
     box-shadow: 0 0 5px #4cc9f0, 0 0 15px #4cc9f0;
   }
 }
+
 .user-data table {
   user-select: none;
   width: 100%;
@@ -185,4 +188,13 @@ span {
 
 .user-data::-webkit-scrollbar {
   width: 8px;
+}
+
+#showPassword {
+  display: flex;
+  position: absolute;
+  right: -30%;
+  top: 60%;
+  border: none;
+  outline: none;
 }

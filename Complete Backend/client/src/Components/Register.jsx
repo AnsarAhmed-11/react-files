@@ -1,9 +1,10 @@
 import { useActionState } from "react"
 import axios from "axios"
 import { Link } from "react-router-dom"
+import { useState } from "react"
 
-const Form = () => {
-    //testing fake data -- 
+const Register = () => {
+    //testing fake data --
     // const sendFakeUsers = async () => {
     //     for (let i = 0; i < 100; i++) {
 
@@ -55,6 +56,7 @@ const Form = () => {
     }
 
     const [data, action, pending] = useActionState(formHandler, undefined)
+    const [showPassword, setPassword] = useState(false)
     return (
         <div>
             <form className="form" action={action}>
@@ -69,13 +71,30 @@ const Form = () => {
                 </div>
                 <div className="form-fields">
                     <label htmlFor='password'>Password</label>
-                    <input id="password" type="password" placeholder="Enter Password" name='password' autoComplete="current-password" required />
+                    <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        name="password"
+                        autoComplete="new-password"
+                        required
+                    />
+
+                    <input
+                        type="checkbox"
+                        name="show"
+                        id="showPassword"
+                        checked={showPassword}
+                        onChange={(e) => setPassword(e.target.checked)}
+                    />
+
                 </div>
                 <div className="form-fields">
                     <button disabled={pending}>
                         {pending ? 'Wait Until Submitting' : 'Register'}
                     </button>
                 </div>
+
                 {
                     data?.error && <span style={{ color: "#d90429" }}>{data?.error}</span>
                 }
@@ -90,4 +109,4 @@ const Form = () => {
     )
 }
 
-export default Form
+export default Register

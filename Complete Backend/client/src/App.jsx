@@ -1,5 +1,5 @@
 
-import Form from "./Components/Form";
+import Register from "./Components/Register";
 import { Route, Routes} from "react-router-dom";
 import Data from "./Components/Data";
 import Delete from "./Components/Delete";
@@ -13,7 +13,7 @@ const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Form />} />
+        <Route path="/" element={<Register />} />
         <Route path="/data" element={<Data />} />
         <Route path="/Update" element={<Update />} />
         <Route path="/Delete" element={<Delete />} />

@@ -1,5 +1,6 @@
 import { useActionState } from "react"
 import axios from "axios"
+import { useState } from "react"
 
 const Delete = () => {
     const formHandler = async (prevData, formData) => {
@@ -11,12 +12,13 @@ const Delete = () => {
                 email, password
             })
             return { message: res.data.message }//making object whose key name is message
-            
+
         } catch (error) {
             return { error: error.response?.data?.message }
         }
     }
     const [data, action, pending] = useActionState(formHandler, undefined)
+    const [showPassword, setPassword] = useState(false)
     return (
         <div>
             <form className="form" action={action}>
@@ -25,9 +27,24 @@ const Delete = () => {
                     <label html For='email'>Email</label>
                     <input id="email" type="email" placeholder="Enter Email" name='email' autoComplete="email" required />
                 </div>
-                <div className="form-fields">
+        <div className="form-fields">
                     <label htmlFor='password'>Password</label>
-                    <input id="password" type="password" placeholder="Enter Password" name='password' autoComplete="current-password" required />
+                    <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        name="password"
+                        autoComplete="new-password"
+                        required
+                    />
+
+                    <input
+                        type="checkbox"
+                        name="show"
+                        id="showPassword"
+                        checked={showPassword}
+                        onChange={(e) => setPassword(e.target.checked)}
+                    />
                 </div>
 
                 <div className="form-fields">

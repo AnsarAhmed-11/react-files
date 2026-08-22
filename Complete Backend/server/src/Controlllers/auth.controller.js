@@ -1,8 +1,12 @@
 const db = require("../Config/db")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const { fetchAll, findByEmail, createUser, findByPassword } = require("../Models/user.model")
+const { fetchAll, findByEmail, createUser, findByPassword, deleteUser, updateName, updateEmail, updateEmailPassword, updateNameEmail, updateNamePassword, updatePassword } = require("../Models/user.model")
 
+/**
+ * -POST Request Register
+ * -/register
+*/
 const register = async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -40,6 +44,10 @@ const register = async (req, res) => {
         console.log(err)
     }
 }
+/**
+ *  @ Post Request
+ *  @ /Login
+ */
 const Login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -89,14 +97,17 @@ const Login = async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-
         return res.status(500).json({
             success: false,
             message: "Something went wrong.."
         });
     }
 };
+
+/**
+ *  @ Get Request
+ *  @ /data
+ */
 const data = async (req, res) => {
     try {
         const results = await fetchAll()
@@ -107,53 +118,59 @@ const data = async (req, res) => {
             error: err.message
         });
     }
-    // db.query("SELECT * FROM reactData", (err, results) => {
-    //     if (err) {
-    //         return res.status(500).json({ error: err.message });
-    //     }
-    //     res.json(results);
-    // });
 }
+/**
+ * @ Through Post Request
+ * @ /delete Route
+ */
 const remove = async (req, res) => {
     const { email, password } = req.body
-    //query Fetch and Delete
-    const findData = "SELECT * FROM reactData WHERE email = ?"
-    const sqlD = "DELETE FROM reactData WHERE email = ?"
-    db.query(findData, [email], async (err, result) => {
-        if (err) {
-            res.status(500).json({
-                message: "something went wrong..."
-            })
-        }
-        if (result.length === 0) {
-            return res.status(404).json({
-                message: "Invalid user-email"
+    try {
+        const userEmail = await findByEmail(email);
+
+        if (userEmail.length <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Email doesn't exist"
             });
         }
-        try {
-            const hashPassword = result[0].password
-            const matchPassword = await bcrypt.compare(password, hashPassword);
-            if (!matchPassword) {
-                return res.status(401).json({
-                    message: "invalid password,"
-                })
-            }
-            db.query(sqlD, [email], (err, deleteResult) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                return res.status(200).json({
-                    message: "data deleted ✅"
-                })
+
+        const user = userEmail[0];
+
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!passwordMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Password not matched"
             });
-        } catch (err) {
-            return res.status(500).json({
-                message: "server error from DB",
+        }
+        const result = await deleteUser(email, password)
+        if (result.affectedRows === 1) {
+            return res.status(200).json({
+                message: "user Deleted SuccessFully ✅"
             })
         }
-    })
+        return res.status(404).json({
+            message: "NOT deleted",
+        })
+
+
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            message: " Database OR Query Error"
+        })
+    }
 
 }
+/**
+ * @ Post Request
+ * @ /update
+ */
 const update = async (req, res) => {
     const { email, password } = req.body
     try {
@@ -188,55 +205,132 @@ const update = async (req, res) => {
             message: "soemthing went wrong",
         })
     }
-    // db.query(findData, [email, password], (err, result) => {
-    //     if (err) {
-    //         return res.status(500).json({
-    //             success: false,
-    //             message: "backend error"
-    //         })
-    //     }
-    //     if (result.length === 0) {
-    //         return res.status(404).json({
-    //             success: false,
-    //             message: "User not found"
-    //         });
-    //     }
-    //     res.json({
-    //         success: true,
-    //         message: "user found",
-    //         email
-    //     })
-    // })
-
 }
+/**
+ * @ Post Request
+ * @ /updateData
+ */
 const updateData = async (req, res) => {
-    const { name, password } = req.body
-    sqlN = "UPDATE reactData SET name = ? WHERE email = ?"
-    sqlP = "UPDATE reactData SET password = ? WHERE email = ?"
+    const { name, email, password, prevEmail } = req.body;
 
-    if (name == "") {
-        if (password == "") {
-            return res.status(500).json({
-                message: "somehting went wrong"
-            })
-        }
-        else {
-            db.query(sqlP, (err, result) => {
-                if (err) {
-                    return res.status(500).json({
-                        message: "password realted issue"
-                    })
-                }
+    console.log("name:", name);
+    console.log("email:", email);
+    console.log("password:", password);
+    console.log("prevEmail:", prevEmail);
+
+    try {
+        // Update name only
+        if (name && !email && !password) {
+            const result = await updateName(name, prevEmail);
+
+            if (result.affectedRows > 0) {
                 return res.json({
-                    message: "password updated"
-                })
-            })
+                    message: "Name Updated"
+                });
+            }
 
+            return res.status(400).json({
+                message: "Name cannot be updated"
+            });
         }
-    }
-    else {
-        db.query(sqlN)
-    }
 
-}
+        // Update email only
+        if (email && !name && !password) {
+            const result = await updateEmail(email, prevEmail);
+
+            if (result.affectedRows > 0) {
+                return res.json({
+                    message: "Email Updated"
+                });
+            }
+
+            return res.status(400).json({
+                message: "Email cannot be updated"
+            });
+        }
+
+        // Update password only
+        if (password && !name && !email) {
+            const result = await updatePassword(password, prevEmail);
+
+            if (result.affectedRows > 0) {
+                return res.json({
+                    message: "Password Updated"
+                });
+            }
+
+            return res.status(400).json({
+                message: "Password cannot be updated"
+            });
+        }
+
+        // Update email + password
+        if (email && password && !name) {
+            const result = await updateEmailPassword(
+                email,
+                password,
+                prevEmail
+            );
+
+            if (result.affectedRows > 0) {
+                return res.json({
+                    message: "Email and Password Updated"
+                });
+            }
+
+            return res.status(400).json({
+                message: "Email and Password cannot be updated"
+            });
+        }
+
+        // Update name + email
+        if (name && email && !password) {
+            const result = await updateNameEmail(
+                name,
+                email,
+                prevEmail
+            );
+
+            if (result.affectedRows > 0) {
+                return res.json({
+                    message: "Name and Email Updated"
+                });
+            }
+
+            return res.status(400).json({
+                message: "Name and Email cannot be updated"
+            });
+        }
+
+        // Update name + password
+        if (name && password && !email) {
+            const result = await updateNamePassword(
+                name,
+                password,
+                prevEmail
+            );
+
+            if (result.affectedRows > 0) {
+                return res.json({
+                    message: "Name and Password Updated"
+                });
+            }
+
+            return res.status(400).json({
+                message: "Name and Password cannot be updated"
+            });
+        }
+
+        return res.status(400).json({
+            message: "No valid update data provided"
+        });
+
+    } catch (err) {
+        console.error("err:", err);
+
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
+};
 module.exports = { Login, register, data, remove, update, updateData }

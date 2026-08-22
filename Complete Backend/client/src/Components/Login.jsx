@@ -1,8 +1,8 @@
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
 const Login = () => {
-    const send=useNavigate()
+    const send = useNavigate()
     const formHandler = async (prevData, formData) => {
 
         const email = formData.get('email')
@@ -14,11 +14,11 @@ const Login = () => {
                 // withCredentials: true zaroori hai taaki browser cookie receive kare aur future requests me automatically bheje.
                 withCredentials: true,
             })
-          if(res.data.success===true){
-            localStorage.setItem("isLoggedIn",res.data.success)
+            if (res.data.success === true) {
+                localStorage.setItem("isLoggedIn", res.data.success)
                 alert("welcome to update profile page")
                 send("/Profile")
-          }
+            }
 
             return {
                 message: res.data.message || "data submit"
@@ -29,6 +29,7 @@ const Login = () => {
     }
 
     const [data, action, pending] = useActionState(formHandler, undefined)
+    const [showPassword, setPassword] = useState(false)
     return (
         <div>
             <form className="form" action={action}>
@@ -39,7 +40,22 @@ const Login = () => {
                 </div>
                 <div className="form-fields">
                     <label htmlFor='password'>Password</label>
-                    <input id="password" type="password" placeholder="Enter Password" name='password' autoComplete="current-password" required />
+                    <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        name="password"
+                        autoComplete="new-password"
+                        required
+                    />
+
+                    <input
+                        type="checkbox"
+                        name="show"
+                        id="showPassword"
+                        checked={showPassword}
+                        onChange={(e) => setPassword(e.target.checked)}
+                    />
                 </div>
                 <div className="form-fields">
                     <button disabled={pending}>
